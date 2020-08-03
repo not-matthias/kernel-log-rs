@@ -1,5 +1,4 @@
 # kernel-logger-rs
-Windows kernel logging library. 
 
 Implements the `print!`, `println!` and `dbg!` macros so they can be used in the kernel without the use of an allocator.
 
