@@ -1,6 +1,6 @@
 # kernel-logger-rs
 
-Implements the `print!`, `println!` and `dbg!` macros so they can be used in the kernel without the use of an allocator.
+A windows kernel logging library that implements the `print!`, `println!` and `dbg!` macros so they can be used without the use of an allocator.
 
 By default the macros are prefixed with `kernel_`. If you want to remove the prefix, you can enable the `std_name` feature.
 
