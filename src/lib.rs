@@ -72,7 +72,7 @@ macro_rules! kernel_print {
     ($($arg:tt)*) => {
     #[allow(unused_must_use)]
     {
-        let mut logger = $crate::Logger::new();
+        let mut logger = $crate::logger::Logger::new();
         logger.write_fmt(format_args!($($arg)*));
     }
     };
@@ -89,7 +89,7 @@ macro_rules! kernel_println {
     ($($arg:tt)*) => {
         #[allow(unused_must_use)]
         {
-            let mut logger = $crate::Logger::new();
+            let mut logger = $crate::logger::Logger::new();
             logger.write_fmt(format_args!($($arg)*));
             logger.write_nl();
         }
