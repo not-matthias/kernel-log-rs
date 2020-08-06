@@ -16,11 +16,11 @@ impl Logger {
     }
 
     pub fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        __kernel_println(s)
+        core::fmt::Write::write_str(self, s)
     }
 
     pub fn write_nl(&mut self) -> core::fmt::Result {
-        __kernel_println("\n")
+        self.write_str("\n")
     }
 }
 
