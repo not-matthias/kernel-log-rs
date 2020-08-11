@@ -18,6 +18,10 @@ impl Logger {
     pub fn write_str(&mut self, s: &str) -> core::fmt::Result {
         core::fmt::Write::write_str(self, s)
     }
+
+    pub fn write_nl(&mut self) -> core::fmt::Result {
+        self.write_str("\n")
+    }
 }
 
 #[doc(hidden)]

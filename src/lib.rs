@@ -90,7 +90,8 @@ macro_rules! kernel_println {
         #[allow(unused_must_use)]
         {
             let mut logger = $crate::logger::Logger::new();
-            logger.write_fmt(format_args_nl!($($arg)*));
+            logger.write_fmt(format_args!($($arg)*));
+            logger.write_nl();
         }
     };
 }
