@@ -21,6 +21,8 @@
 
 #![no_std]
 
+extern crate alloc;
+
 #[doc(hidden)]
 pub mod logger;
 
@@ -42,23 +44,23 @@ pub use std_name::*;
 #[macro_export]
 macro_rules! kernel_dbg {
     () => {
-        $crate::println!("[{}:{}]", file!(), line!());
+        $crate::kernel_println!("[{}:{}]", file!(), line!());
     };
     ($val:expr) => {
         // Use of `match` here is intentional because it affects the lifetimes
         // of temporaries - https://stackoverflow.com/a/48732525/1063961
         match $val {
             tmp => {
-                $crate::println!("[{}:{}] {} = {:#?}",
+                $crate::kernel_println!("[{}:{}] {} = {:#?}",
                     file!(), line!(), stringify!($val), &tmp);
                 tmp
             }
         }
     };
     // Trailing comma with single argument is ignored
-    ($val:expr,) => { $crate::dbg!($val) };
+    ($val:expr,) => { $crate::kernel_dbg!($val) };
     ($($val:expr),+ $(,)?) => {
-        ($($crate::dbg!($val)),+,)
+        ($($crate::kernel_dbg!($val)),+,)
     };
 }
 
@@ -85,7 +87,9 @@ macro_rules! kernel_print {
 /// See [`println!`](https://doc.rust-lang.org/std/macro.println.html) for full documentation.
 #[macro_export]
 macro_rules! kernel_println {
-    () => { $crate::kernel_println!("") };
+    () => {
+        $crate::kernel_println!("")
+    };
     ($($arg:tt)*) => {
         #[allow(unused_must_use)]
         {

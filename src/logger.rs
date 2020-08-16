@@ -16,16 +16,17 @@ impl Logger {
     }
 
     pub fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        core::fmt::Write::write_str(self, s)
+        __kernel_println(s)
     }
 
     pub fn write_nl(&mut self) -> core::fmt::Result {
-        self.write_str("\n")
+        __kernel_println("\n\0")
     }
 }
 
 #[doc(hidden)]
+#[inline]
 pub fn __kernel_println(msg: &str) -> core::fmt::Result {
-    unsafe { ntapi::ntdbg::DbgPrint(msg.as_ptr() as _) };
+    unsafe { ntapi::ntdbg::DbgPrintEx(0, 0, alloc::format!("{}\0", msg).as_ptr() as _) };
     Ok(())
 }
