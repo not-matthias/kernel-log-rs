@@ -20,7 +20,7 @@ impl Logger {
     }
 
     pub fn write_nl(&mut self) -> core::fmt::Result {
-        __kernel_println("\n\0")
+        __kernel_println("\n")
     }
 }
 
