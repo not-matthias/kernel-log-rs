@@ -10,5 +10,6 @@ edition = "2018"
 ntapi = { version = "0.3.4", default-features = false, features = ["kernel"] }
 
 [features]
-default = []
+default = ["format"]
 std_name = []
+format = []

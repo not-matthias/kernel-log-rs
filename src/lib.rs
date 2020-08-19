@@ -33,6 +33,7 @@ pub mod std_name {
     pub use super::kernel_print as print;
     pub use super::kernel_println as println;
 }
+
 #[cfg(feature = "std_name")]
 pub use std_name::*;
 
@@ -72,10 +73,34 @@ macro_rules! kernel_dbg {
 #[macro_export]
 macro_rules! kernel_print {
     ($($arg:tt)*) => {
-        #[allow(unused_must_use)]
+        $crate::__impl_print!($($arg)*);
+    };
+}
+
+#[cfg(not(feature = "format"))]
+#[macro_export]
+#[doc(hidden)]
+macro_rules! __impl_print {
+    ($($arg:tt)*) => {
         {
             let mut logger = $crate::logger::Logger::new();
-            logger.write_fmt(format_args!($($arg)*));
+            let _ = logger.write_fmt(format_args!($($arg)*));
+        }
+    };
+}
+
+#[cfg(feature = "format")]
+#[macro_export]
+#[doc(hidden)]
+macro_rules! __impl_print {
+    ($($arg:tt)*) => {
+        {
+            let out = {
+                let mut out = alloc::format!($($arg)*);
+                out.push('\0');
+                out
+            };
+            let _ = $crate::logger::__kernel_println(out.as_ref());
         }
     };
 }
@@ -91,11 +116,35 @@ macro_rules! kernel_println {
         $crate::kernel_println!("")
     };
     ($($arg:tt)*) => {
-        #[allow(unused_must_use)]
+        $crate::__impl_println!($($arg)*);
+    };
+}
+
+#[cfg(not(feature = "format"))]
+#[macro_export]
+#[doc(hidden)]
+macro_rules! __impl_println {
+    ($($arg:tt)*) => {
         {
             let mut logger = $crate::logger::Logger::new();
-            logger.write_fmt(format_args!($($arg)*));
-            logger.write_nl();
+            let _ = logger.write_fmt(format_args!($($arg)*));
+            let _ = logger.write_nl();
+        }
+    };
+}
+
+#[cfg(feature = "format")]
+#[macro_export]
+#[doc(hidden)]
+macro_rules! __impl_println {
+    ($($arg:tt)*) => {
+        {
+            let out = {
+                let mut out = alloc::format!($($arg)*);
+                out.push_str("\n\0");
+                out
+            };
+            let _ = $crate::logger::__kernel_println(out.as_ref());
         }
     };
 }
