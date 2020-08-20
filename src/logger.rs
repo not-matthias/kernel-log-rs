@@ -1,3 +1,5 @@
+use alloc::string::String;
+
 pub struct Logger;
 
 impl core::fmt::Write for Logger {
@@ -26,7 +28,18 @@ impl Logger {
 
 #[doc(hidden)]
 #[inline]
-pub fn __kernel_println(msg: &str) -> core::fmt::Result {
-    unsafe { ntapi::ntdbg::DbgPrintEx(0, 0, alloc::format!("{}\0", msg).as_ptr() as _) };
+pub fn __kernel_println<S: Into<String>>(string: S) -> core::fmt::Result {
+    // Add the null-terminator to the string.
+    //
+    let string = {
+        let mut temp = string.into();
+        temp.push('\0');
+        temp
+    };
+
+    // Print the null-terminated string.
+    //
+    unsafe { ntapi::ntdbg::DbgPrintEx(0, 0, string.as_ptr() as _) };
+
     Ok(())
 }

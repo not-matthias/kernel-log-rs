@@ -95,12 +95,8 @@ macro_rules! __impl_print {
 macro_rules! __impl_print {
     ($($arg:tt)*) => {
         {
-            let out = {
-                let mut out = alloc::format!($($arg)*);
-                out.push('\0');
-                out
-            };
-            let _ = $crate::logger::__kernel_println(out.as_ref());
+            let out = alloc::format!($($arg)*);
+            let _ = $crate::logger::__kernel_println(out);
         }
     };
 }
@@ -141,10 +137,10 @@ macro_rules! __impl_println {
         {
             let out = {
                 let mut out = alloc::format!($($arg)*);
-                out.push_str("\n\0");
+                out.push('\n');
                 out
             };
-            let _ = $crate::logger::__kernel_println(out.as_ref());
+            let _ = $crate::logger::__kernel_println(out);
         }
     };
 }
