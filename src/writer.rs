@@ -1,14 +1,14 @@
 use alloc::string::String;
 
-pub struct Logger;
+pub struct KernelWriter;
 
-impl core::fmt::Write for Logger {
+impl core::fmt::Write for KernelWriter {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         __kernel_println(s)
     }
 }
 
-impl Logger {
+impl KernelWriter {
     pub const fn new() -> Self {
         Self
     }

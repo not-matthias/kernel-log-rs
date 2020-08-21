@@ -24,7 +24,7 @@
 extern crate alloc;
 
 #[doc(hidden)]
-pub mod logger;
+pub mod writer;
 
 #[cfg(feature = "std_name")]
 #[doc(hidden)]
@@ -83,8 +83,8 @@ macro_rules! kernel_print {
 macro_rules! __impl_print {
     ($($arg:tt)*) => {
         {
-            let mut logger = $crate::logger::Logger::new();
-            let _ = logger.write_fmt(format_args!($($arg)*));
+            let mut writer = $crate::writer::KernelWriter::new();
+            let _ = writer.write_fmt(format_args!($($arg)*));
         }
     };
 }
@@ -96,7 +96,7 @@ macro_rules! __impl_print {
     ($($arg:tt)*) => {
         {
             let out = alloc::format!($($arg)*);
-            let _ = $crate::logger::__kernel_println(out);
+            let _ = $crate::writer::__kernel_println(out);
         }
     };
 }
@@ -122,9 +122,9 @@ macro_rules! kernel_println {
 macro_rules! __impl_println {
     ($($arg:tt)*) => {
         {
-            let mut logger = $crate::logger::Logger::new();
-            let _ = logger.write_fmt(format_args!($($arg)*));
-            let _ = logger.write_nl();
+            let mut writer = $crate::writer::KernelWriter::new();
+            let _ = writer.write_fmt(format_args!($($arg)*));
+            let _ = writer.write_nl();
         }
     };
 }
@@ -140,7 +140,7 @@ macro_rules! __impl_println {
                 out.push('\n');
                 out
             };
-            let _ = $crate::logger::__kernel_println(out);
+            let _ = $crate::writer::__kernel_println(out);
         }
     };
 }
