@@ -39,7 +39,7 @@ pub fn __kernel_println<S: Into<String>>(string: S) -> core::fmt::Result {
 
     // Print the null-terminated string.
     //
-    unsafe { ntapi::ntdbg::DbgPrintEx(0, 0, string.as_ptr() as _) };
+    unsafe { ntapi::ntdbg::DbgPrint(string.as_ptr() as _) };
 
     Ok(())
 }
