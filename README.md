@@ -20,4 +20,4 @@ kernel_println!("Hello {}!", "world");
 ## Features
 
 - `std_name`: Allows you to use the macros without the `kernel_` prefix.
-- `format`: Uses the `format!` macro instead of the `core::fmt::Write` trait to convert the passed data to a string.
+- `format`: Uses the `format!` macro instead of the `core::fmt::Write` trait to convert the passed data into a string.
