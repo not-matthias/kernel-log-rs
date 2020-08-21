@@ -3,27 +3,19 @@ use alloc::string::String;
 pub struct KernelWriter;
 
 impl core::fmt::Write for KernelWriter {
-    fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        __kernel_println(s)
-    }
+    fn write_str(&mut self, s: &str) -> core::fmt::Result { __kernel_println(s) }
 }
 
 impl KernelWriter {
-    pub const fn new() -> Self {
-        Self
-    }
+    pub const fn new() -> Self { Self }
 
     pub fn write_fmt(&mut self, args: core::fmt::Arguments) -> core::fmt::Result {
         core::fmt::Write::write_fmt(self, args)
     }
 
-    pub fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        core::fmt::Write::write_str(self, s)
-    }
+    pub fn write_str(&mut self, s: &str) -> core::fmt::Result { core::fmt::Write::write_str(self, s) }
 
-    pub fn write_nl(&mut self) -> core::fmt::Result {
-        __kernel_println("\n")
-    }
+    pub fn write_nl(&mut self) -> core::fmt::Result { __kernel_println("\n") }
 }
 
 #[doc(hidden)]

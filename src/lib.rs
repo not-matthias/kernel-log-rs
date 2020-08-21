@@ -1,6 +1,8 @@
-//! Implements the `print!`, `println!` and `dbg!` macros so they can be used in the kernel without the use of an allocator.
+//! Implements the `print!`, `println!` and `dbg!` macros so they can be used in
+//! the kernel without the use of an allocator.
 //!
-//! By default the macros are prefixed with `kernel_`. If you want to remove the prefix, you can enable the `std_name` feature.
+//! By default the macros are prefixed with `kernel_`. If you want to remove the
+//! prefix, you can enable the `std_name` feature.
 //!
 //! ## Usage
 //!
@@ -19,27 +21,25 @@
 //! ## Features
 //!
 //! - `std_name`: Allows you to use the macros without the `kernel_` prefix.
-//! - `format`: Uses the `format!` macro instead of the `core::fmt::Write` trait to convert the passed data into a string.
+//! - `format`: Uses the `format!` macro instead of the `core::fmt::Write` trait
+//!   to convert the passed data into a string.
 
 #![no_std]
 
 extern crate alloc;
 
-#[doc(hidden)]
-pub mod writer;
+#[doc(hidden)] pub mod writer;
 
 #[cfg(feature = "std_name")]
 #[doc(hidden)]
 pub mod std_name {
-    pub use super::kernel_dbg as dbg;
-    pub use super::kernel_print as print;
-    pub use super::kernel_println as println;
+    pub use super::{kernel_dbg as dbg, kernel_print as print, kernel_println as println};
 }
 
-#[cfg(feature = "std_name")]
-pub use std_name::*;
+#[cfg(feature = "std_name")] pub use std_name::*;
 
-/// Macro for printing the value of a given expression for quick and dirty debugging.
+/// Macro for printing the value of a given expression for quick and dirty
+/// debugging.
 ///
 /// Does not panic on failure to write - instead silently ignores errors.
 ///
