@@ -1,3 +1,7 @@
+![Rust](https://github.com/not-matthias/kernel-print-rs/workflows/Rust/badge.svg)
+[![crates.io](https://img.shields.io/crates/v/kernel-print.svg)](https://crates.io/crates/kernel-print)
+[![docs.rs](https://docs.rs/kernel-print/badge.svg)](https://docs.rs/kernel-print)
+
 # kernel-print-rs
 
 A windows kernel printing library that implements the `print!`, `println!` and `dbg!` macros so they can be used without the use of an allocator.
