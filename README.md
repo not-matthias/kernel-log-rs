@@ -13,8 +13,9 @@ Exactly as you'd use the original macros from the standard library.
 
 // ...
 
-kernel_dbg!("{}", dbg!(2 + 2));
-kernel_println!("Hello {}!", "world");
+kernel_dbg!(2 + 2);
+kernel_print!("{} + {} = {}\n", 2, 2, 2 + 2);
+kernel_println!("{} + {} = {}", 2, 2, 2 + 2);
 ```
 
 ## Features
