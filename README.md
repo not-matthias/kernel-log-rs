@@ -14,7 +14,7 @@ A minimalistic logger for Windows Kernel Drivers.
 use kernel_log::KernelLogger;
 
 #[no_mangle]
-pub extern "system" fn DriverEntry(driver: *mut DRIVER_OBJECT, _: u64) -> NTSTATUS {
+pub extern "system" fn DriverEntry(_: PDRIVER_OBJECT, _: u64) -> NTSTATUS {
     KernelLogger::init(LevelFilter::Info).expect("Failed to initialize logger");
 
     log::warn!("This is an example message.")

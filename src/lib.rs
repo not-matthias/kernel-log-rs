@@ -52,7 +52,7 @@ impl log::Log for KernelLogger {
     fn log(&self, record: &Record) {
         if self.enabled(record.metadata()) {
             let message = format!(
-                "{:<5} [{}] {}\0",
+                "{:<5} [{}] {}\n\0",
                 record.level().to_string(),
                 record.target(),
                 record.args()
