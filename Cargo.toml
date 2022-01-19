@@ -1,15 +1,15 @@
 [package]
 name = "kernel-log"
-version = "0.1.0"
+version = "0.1.1"
 description = "Windows kernel printing library."
 authors = ["not-matthias <26800596+not-matthias@users.noreply.github.com>"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/not-matthias/kernel-log-rs"
 license-file = "LICENSE"
 
 [dependencies]
-ntapi = { version = "0.3.4", default-features = false, features = ["kernel"] }
+ntapi = { version = "0.3.6", default-features = false, features = ["kernel"] }
 log = { version = "0.4.14", features = [] }
 
 [features]
