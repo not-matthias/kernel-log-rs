@@ -2,27 +2,21 @@
 [![crates.io](https://img.shields.io/crates/v/kernel-print.svg)](https://crates.io/crates/kernel-print)
 [![docs.rs](https://docs.rs/kernel-print/badge.svg)](https://docs.rs/kernel-print)
 
-# kernel-print-rs
+# kernel-log-rs
 
-A windows kernel printing library that implements the `print!`, `println!` and `dbg!` macros so they can be used without the use of an allocator.
-
-By default the macros are prefixed with `kernel_`. If you want to remove the prefix, you can enable the `std_name` feature.
+A minimalistic logger for Windows Kernel Drivers.
 
 ## Usage
 
-Exactly as you'd use the original macros from the standard library.
-
-```no_run
+```rust
 #![no_std]
 
-// ...
+use kernel_log::KernelLogger;
 
-kernel_dbg!(2 + 2);
-kernel_print!("{} + {} = {}\n", 2, 2, 2 + 2);
-kernel_println!("{} + {} = {}", 2, 2, 2 + 2);
+#[no_mangle]
+pub extern "system" fn DriverEntry(driver: *mut DRIVER_OBJECT, _: u64) -> NTSTATUS {
+    KernelLogger::init(LevelFilter::Info).expect("Failed to initialize logger");
+
+    log::warn!("This is an example message.")
+}
 ```
-
-## Features
-
-- `std_name`: Allows you to use the macros without the `kernel_` prefix.
-- `format`: Uses the `format!` macro instead of the `core::fmt::Write` trait to convert the passed data into a string.

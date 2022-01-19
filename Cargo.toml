@@ -1,19 +1,16 @@
 [package]
-name = "kernel-print"
+name = "kernel-log"
 version = "0.1.0"
 description = "Windows kernel printing library."
 authors = ["not-matthias <26800596+not-matthias@users.noreply.github.com>"]
 edition = "2018"
 readme = "README.md"
-repository = "https://github.com/not-matthias/kernel-print-rs"
+repository = "https://github.com/not-matthias/kernel-log-rs"
 license-file = "LICENSE"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 ntapi = { version = "0.3.4", default-features = false, features = ["kernel"] }
+log = { version = "0.4.14", features = [] }
 
 [features]
-default = ["format"]
-std_name = []
-format = []
+default = []

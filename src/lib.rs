@@ -24,125 +24,42 @@
 //! - `format`: Uses the `format!` macro instead of the `core::fmt::Write` trait
 //!   to convert the passed data into a string.
 
+//! This crate provides a simple wrapper for logging with the `DbgPrint`
+//! function. The logs won't be included in the final binary which helps to
+//! harden reverse engineering.
+
 #![no_std]
 
 extern crate alloc;
 
-#[doc(hidden)] pub mod writer;
+use alloc::{format, string::ToString};
+use log::{LevelFilter, Metadata, Record, SetLoggerError};
+use ntapi::ntdbg::DbgPrint;
 
-#[cfg(feature = "std_name")]
-#[doc(hidden)]
-pub mod std_name {
-    pub use super::{kernel_dbg as dbg, kernel_print as print, kernel_println as println};
+static LOGGER: KernelLogger = KernelLogger;
+
+pub struct KernelLogger;
+
+impl KernelLogger {
+    pub fn init(level: LevelFilter) -> Result<(), SetLoggerError> {
+        log::set_logger(&LOGGER).map(|()| log::set_max_level(level))
+    }
 }
 
-#[cfg(feature = "std_name")] pub use std_name::*;
+impl log::Log for KernelLogger {
+    fn enabled(&self, _metadata: &Metadata) -> bool { true }
 
-/// Macro for printing the value of a given expression for quick and dirty
-/// debugging.
-///
-/// Does not panic on failure to write - instead silently ignores errors.
-///
-/// See [`dbg!`](https://doc.rust-lang.org/std/macro.dbg.html) for full documentation.
-#[macro_export]
-macro_rules! kernel_dbg {
-    () => {
-        $crate::kernel_println!("[{}:{}]", file!(), line!());
-    };
-    ($val:expr) => {
-        // Use of `match` here is intentional because it affects the lifetimes
-        // of temporaries - https://stackoverflow.com/a/48732525/1063961
-        match $val {
-            tmp => {
-                $crate::kernel_println!("[{}:{}] {} = {:#?}",
-                    file!(), line!(), stringify!($val), &tmp);
-                tmp
-            }
+    fn log(&self, record: &Record) {
+        if self.enabled(record.metadata()) {
+            let message = format!(
+                "{:<5} [{}] {}\0",
+                record.level().to_string(),
+                record.target(),
+                record.args()
+            );
+            unsafe { DbgPrint(message.as_ptr() as _) };
         }
-    };
-    // Trailing comma with single argument is ignored
-    ($val:expr,) => { $crate::kernel_dbg!($val) };
-    ($($val:expr),+ $(,)?) => {
-        ($($crate::kernel_dbg!($val)),+,)
-    };
-}
+    }
 
-/// Prints to the standard output.
-///
-/// Does not panic on failure to write - instead silently ignores errors.
-///
-/// See [`print!`](https://doc.rust-lang.org/std/macro.print.html) for full documentation.
-#[macro_export]
-macro_rules! kernel_print {
-    ($($arg:tt)*) => {
-        $crate::__impl_print!($($arg)*);
-    };
-}
-
-#[cfg(not(feature = "format"))]
-#[macro_export]
-#[doc(hidden)]
-macro_rules! __impl_print {
-    ($($arg:tt)*) => {
-        {
-            let mut writer = $crate::writer::KernelWriter::new();
-            let _ = writer.write_fmt(format_args!($($arg)*));
-        }
-    };
-}
-
-#[cfg(feature = "format")]
-#[macro_export]
-#[doc(hidden)]
-macro_rules! __impl_print {
-    ($($arg:tt)*) => {
-        {
-            let out = alloc::format!($($arg)*);
-            let _ = $crate::writer::__kernel_println(out);
-        }
-    };
-}
-
-/// Prints to the standard output, with a newline.
-///
-/// Does not panic on failure to write - instead silently ignores errors.
-///
-/// See [`println!`](https://doc.rust-lang.org/std/macro.println.html) for full documentation.
-#[macro_export]
-macro_rules! kernel_println {
-    () => {
-        $crate::kernel_println!("")
-    };
-    ($($arg:tt)*) => {
-        $crate::__impl_println!($($arg)*);
-    };
-}
-
-#[cfg(not(feature = "format"))]
-#[macro_export]
-#[doc(hidden)]
-macro_rules! __impl_println {
-    ($($arg:tt)*) => {
-        {
-            let mut writer = $crate::writer::KernelWriter::new();
-            let _ = writer.write_fmt(format_args!($($arg)*));
-            let _ = writer.write_nl();
-        }
-    };
-}
-
-#[cfg(feature = "format")]
-#[macro_export]
-#[doc(hidden)]
-macro_rules! __impl_println {
-    ($($arg:tt)*) => {
-        {
-            let out = {
-                let mut out = alloc::format!($($arg)*);
-                out.push('\n');
-                out
-            };
-            let _ = $crate::writer::__kernel_println(out);
-        }
-    };
+    fn flush(&self) {}
 }
