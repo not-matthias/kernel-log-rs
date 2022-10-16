@@ -1,6 +1,6 @@
 [package]
 name = "kernel-log"
-version = "0.1.1"
+version = "0.1.2"
 description = "Windows kernel printing library."
 authors = ["not-matthias <26800596+not-matthias@users.noreply.github.com>"]
 edition = "2021"
