@@ -34,7 +34,7 @@ extern crate alloc;
 
 use alloc::{format, string::ToString};
 use log::{LevelFilter, Metadata, Record, SetLoggerError};
-use ntapi::ntdbg::DbgPrint;
+use ntapi::ntdbg::DbgPrintEx;
 
 static LOGGER: KernelLogger = KernelLogger;
 
@@ -57,7 +57,7 @@ impl log::Log for KernelLogger {
                 record.target(),
                 record.args()
             );
-            unsafe { DbgPrint(message.as_ptr() as _) };
+            unsafe { DbgPrintEx(0, 0, message.as_ptr() as _) };
         }
     }
 
